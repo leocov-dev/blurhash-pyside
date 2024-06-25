@@ -68,12 +68,12 @@ wheel.py-api = "cp39"
 # ------------------------------
 # cibuildwheel -----------------------
 [tool.cibuildwheel]
-build-frontend = "build"
+build-frontend = "build[uv]"
 # skip platforms
 #   pp*         - don't build any PyPy variations
 #   win32*      - don't build 32bit windows variations
 #   *_i686      - don't build 32bit linux variations
 #   *musllinux* - don't build musl linux variations
 skip = "pp* *-win32 *_i686 *musllinux*"
-test-requires = "pytest"
+test-requires = "pytest PySide6"
 test-command = "pytest {project}/tests"
