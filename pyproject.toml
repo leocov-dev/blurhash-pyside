@@ -1,0 +1,79 @@
+[build-system]
+requires = ["hatchling", "scikit-build-core>=0.3.3"]
+build-backend = "hatchling.build"
+
+[project]
+name = "blurhash-pyside"
+description = ''
+readme = "README.md"
+license-files = { paths = ["LICENSE"] }
+authors = [
+    { name = "Leo Covarrubias", email = "leo@leocov.com" },
+]
+keywords = ["pyside2", "pyside6", "burhash"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.9.1"
+dependencies = [
+    "qtpy~=2.4",
+]
+version = "0.1.0"
+
+[project.urls]
+Documentation = "https://github.com/Leonardo Covarrubias/blurhash-pyside#readme"
+Issues = "https://github.com/Leonardo Covarrubias/blurhash-pyside/issues"
+Source = "https://github.com/Leonardo Covarrubias/blurhash-pyside"
+Releases = "https://github.com/Leonardo Covarrubias/blurhash-pyside/releases"
+
+# default ---------------------------------------------------------------
+[tool.hatch.envs.default]
+type = "virtual"
+path = ".venv"
+extra-dependencies = [
+    "pytest",
+    "PySide6",
+]
+
+
+# default ---------------------------------------------------------------
+[tool.hatch.envs.hatch-test]
+dev-mode = true
+extra-dependencies = [
+    "PySide6"
+]
+
+# ------------------------------
+# pytest -----------------------
+[tool.pytest.ini_options]
+minversion = "6.0"
+testpaths = ["tests"]
+
+
+# ------------------------------
+# scikit -----------------------
+[tool.hatch.build.targets.wheel.hooks.scikit-build]
+experimental = true
+
+[tool.scikit-build]
+cmake.version = ">=3.27"
+cmake.build-type = "Release"
+wheel.py-api = "cp39"
+
+# ------------------------------
+# cibuildwheel -----------------------
+[tool.cibuildwheel]
+build-frontend = "build"
+# skip platforms
+#   pp*         - don't build any PyPy variations
+#   win32*      - don't build 32bit windows variations
+#   *_i686      - don't build 32bit linux variations
+#   *musllinux* - don't build musl linux variations
+skip = "pp* *-win32 *_i686 *musllinux*"
+test-requires = "pytest"
+test-command = "pytest {project}/tests"
