@@ -7,7 +7,7 @@ on:
     branches:
       - main
     tags-ignore:
-      - *
+      - "*"
 
 jobs:
   build_wheels:
