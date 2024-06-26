@@ -31,7 +31,7 @@ class Components(NamedTuple):
 
 
 def encode_qimage(image: QImage, components: Components, downsample: int = 1) -> str:
-    """ Encode a QImage to a Blurhash string """
+    """Encode a QImage to a Blurhash string"""
 
     if not components.valid():
         raise ValueError(f"Components: {components} invalid")
@@ -54,12 +54,14 @@ def encode_qimage(image: QImage, components: Components, downsample: int = 1) ->
 
     ordered = []
     for i in range(0, size, bpp):
-        ordered.extend(data[i:i + bpp][0:3])
+        ordered.extend(data[i : i + bpp][0:3])
 
     bh_str = encode(
         ordered,
-        image.width(), image.height(),
-        components.x, components.y,
+        image.width(),
+        image.height(),
+        components.x,
+        components.y,
     )
 
     if not bh_str:
@@ -69,5 +71,5 @@ def encode_qimage(image: QImage, components: Components, downsample: int = 1) ->
 
 
 def encode_qpixmap(pixmap: QPixmap, components: Components, downsample_factor: int = 1) -> str:
-    """ Encode a QPixmap to a Blurhash string """
+    """Encode a QPixmap to a Blurhash string"""
     return encode_qimage(pixmap.toImage(), components, downsample_factor)

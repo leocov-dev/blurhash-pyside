@@ -1,4 +1,5 @@
 from pathlib import Path
+
 from qtpy.QtGui import QImage
 
 from blurhash_pyside import Components, encode_qimage

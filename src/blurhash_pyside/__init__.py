@@ -2,13 +2,6 @@
 #
 # SPDX-License-Identifier: MIT
 from ._core import __version__
-from ._wrapper import decode_to_qimage, decode_to_qpixmap, Components, encode_qimage, encode_qpixmap
+from ._wrapper import Components, decode_to_qimage, decode_to_qpixmap, encode_qimage, encode_qpixmap
 
-__all__ = [
-    "__version__",
-    "decode_to_qimage",
-    "decode_to_qpixmap",
-    "Components",
-    "encode_qimage",
-    "encode_qpixmap"
-]
+__all__ = ["__version__", "decode_to_qimage", "decode_to_qpixmap", "Components", "encode_qimage", "encode_qpixmap"]

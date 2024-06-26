@@ -65,6 +65,27 @@ python = ["3.12", "3.11", "3.10", "3.9"]
 minversion = "6.0"
 testpaths = ["tests"]
 
+# ------------------------------
+# linting
+[tool.ruff.lint]
+extend-ignore = [
+    "PLR2004",
+    "TRY003",
+    "EM101",
+    "EM102",
+]
+
+[tool.ruff.lint.extend-per-file-ignores]
+"__init__.py" = [
+    "TID252",
+]
+"_wrapper.py" = [
+    "TID252",
+]
+"tests/*" = [
+    "INP001",
+    "ARG001",
+]
 
 # ------------------------------
 # scikit -----------------------
