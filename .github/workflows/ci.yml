@@ -63,7 +63,6 @@ jobs:
 
     env:
       MACOSX_DEPLOYMENT_TARGET: "12"
-      CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
 
     steps:
       - name: Download sdist ${{ needs.build_sdist.outputs.SDIST_NAME }}
