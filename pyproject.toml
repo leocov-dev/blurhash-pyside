@@ -99,6 +99,5 @@ test-command = "pytest {project}/tests"
 environment = { MACOSX_DEPLOYMENT_TARGET = "12" }
 
 [tool.cibuildwheel.linux]
-test-command = "echo Wheel installed, not running tests"
 manylinux-x86_64-image = "manylinux_2_28"
 manylinux-aarch64-image = "manylinux_2_31"
