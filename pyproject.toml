@@ -96,6 +96,10 @@ test-command = "pytest {project}/tests"
 [tool.cibuildwheel.windows]
 
 [tool.cibuildwheel.macos]
+test-extras = "dev"
+text-requires = [
+    "PySide2"
+]
 
 [tool.cibuildwheel.linux]
 
