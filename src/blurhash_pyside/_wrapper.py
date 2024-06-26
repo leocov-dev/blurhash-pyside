@@ -11,9 +11,7 @@ def decode_to_qimage(blurhash: str, width: int, height: int) -> QImage:
     Decode a Blurhash string to a QImage.
     """
     data = decode(blurhash, width, height)
-    img = QImage(bytes(data), width, height, width * 4, QImage.Format.Format_RGB32)
-    img.rgbSwap()
-    return img
+    return QImage(bytes(data), width, height, width * 4, QImage.Format.Format_RGB32).rgbSwapped()
 
 
 def decode_to_qpixmap(blurhash: str, width: int, height: int) -> QPixmap:
@@ -38,8 +36,7 @@ def encode_qimage(image: QImage, components: Components, downsample: int = 1) ->
     if not components.valid():
         raise ValueError(f"Components: {components} invalid")
 
-    image = image.convertToFormat(QImage.Format.Format_RGB32)
-    image.rgbSwap()
+    image = image.convertToFormat(QImage.Format.Format_RGB32).rgbSwapped()
 
     if downsample > 1:
         image = image.scaled(
