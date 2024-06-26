@@ -25,20 +25,12 @@
 
 #include "blurhash.hpp"
 
+#define _USE_MATH_DEFINES
+#include <cmath>
 #include <algorithm>
 #include <array>
 #include <cassert>
-#include <cmath>
-#include <numbers>
 #include <stdexcept>
-
-#ifdef DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-#if __has_include(<doctest.h>)
-#include <doctest.h>
-#else
-#include <doctest/doctest.h>
-#endif
-#endif
 
 using namespace std::literals;
 

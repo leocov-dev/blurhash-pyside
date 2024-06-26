@@ -4,6 +4,7 @@ build-backend = "scikit_build_core.build"
 
 [project]
 name = "blurhash-pyside"
+version = "0.1.0"
 description = ''
 readme = "README.md"
 license-files = { paths = ["LICENSE"] }
@@ -23,7 +24,15 @@ requires-python = ">=3.9.1"
 dependencies = [
     "qtpy~=2.4",
 ]
-version = "0.1.0"
+
+[project.optional-dependencies]
+dev = [
+    "pybind11",
+    "pytest",
+]
+pyside6 = [
+    "PySide6-Essentials"
+]
 
 [project.urls]
 Documentation = "https://github.com/Leonardo Covarrubias/blurhash-pyside#readme"
@@ -35,18 +44,17 @@ Releases = "https://github.com/Leonardo Covarrubias/blurhash-pyside/releases"
 [tool.hatch.envs.default]
 type = "virtual"
 path = ".venv"
-extra-dependencies = [
-    "pybind11",
-    "pytest",
-    "PySide6",
+features = [
+    "dev",
+    "pyside6",
 ]
 
 
 # default ---------------------------------------------------------------
 [tool.hatch.envs.hatch-test]
 dev-mode = true
-extra-dependencies = [
-    "PySide6"
+features = [
+    "pyside6"
 ]
 
 # ------------------------------

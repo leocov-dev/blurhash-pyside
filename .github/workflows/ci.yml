@@ -20,6 +20,9 @@ jobs:
         os: [ ubuntu-latest, windows-latest, macos-13, macos-14 ]
 #        py-version: [ 3.9, 3.10, 3.11, 3.12 ]
 
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "12"
+
     steps:
       - uses: actions/checkout@v4
         with:
