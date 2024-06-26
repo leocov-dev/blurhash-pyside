@@ -22,7 +22,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - uses: actions/setup-python@v5
+        name: Install Python
+        with:
+          python-version-file: "pyproject.toml"
+
       - name: Build SDist
+        id: sdist
         run: |
           pipx run build --sdist
           python scripts/export_sdist_name.py
