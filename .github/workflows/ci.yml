@@ -9,46 +9,23 @@ on:
     tags-ignore:
       - "*"
 
+permissions:
+  contents: read
+
 jobs:
-  build_wheels:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      matrix:
-        # macos-13 is an intel runner, macos-14 is apple silicon
-        os: [ ubuntu-latest, windows-latest, macos-13, macos-14 ]
-#        py-version: [ 3.9, 3.10, 3.11, 3.12 ]
-
-    env:
-      MACOSX_DEPLOYMENT_TARGET: "12"
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          submodules: true
-
-      - uses: yezz123/setup-uv@v4
-
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.19
-        # configured in pyproject.toml [tool.cibuildwheel]
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
-          path: ./wheelhouse/*.whl
-
   build_sdist:
     name: Build SDist
     runs-on: ubuntu-latest
+    outputs:
+      SDIST_NAME: ${{ steps.sdist.outputs.SDIST_NAME }}
+
     steps:
       - uses: actions/checkout@v4
-        with:
-          submodules: true
 
       - name: Build SDist
-        run: pipx run build --sdist
+        run: |
+          pipx run build --sdist
+          python scripts/export_sdist_name.py
 
       - name: Check metadata
         run: pipx run twine check dist/*
@@ -57,3 +34,50 @@ jobs:
         with:
           name: cibw-sdist
           path: dist/*.tar.gz
+          if-no-files-found: error
+
+  build_wheels:
+    needs: build_sdist
+
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      # macos-12 is an intel runner, macos-14 is apple silicon
+      matrix:
+        include:
+          - os: ubuntu-20.04
+            cibw_archs: "x86_64"
+          - os: windows-latest
+            cibw_archs: "auto64"
+          - os: macos-12
+            cibw_archs: "x86_64"
+          - os: macos-14
+            cibw_archs: "arm64"
+
+    env:
+      MACOSX_DEPLOYMENT_TARGET: "12"
+
+    steps:
+      - name: Download sdist
+        uses: actions/download-artifact@v4
+        with:
+          name: cibw-sdist
+          path: dist/
+
+      - uses: yezz123/setup-uv@v4
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.19
+        # configured in pyproject.toml [tool.cibuildwheel]
+        with:
+          package-dir: dist/${{ needs.build_sdist.outputs.SDIST_NAME }}
+        env:
+          CIBW_ARCHS: ${{ matrix.cibw_archs }}
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-${{ runner.os }}-${{ matrix.cibw_archs }}
+          path: ./wheelhouse/*.whl
+          if-no-files-found: error
+
