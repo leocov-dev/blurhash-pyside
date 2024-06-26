@@ -39,7 +39,7 @@ jobs:
   build_wheels:
     needs: build_sdist
 
-    name: Build wheels on ${{ matrix.os }}
+    name: Build wheels on ${{ matrix.os }} for ${{ matrix.cibw_archs }}
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -57,15 +57,15 @@ jobs:
 
     env:
       MACOSX_DEPLOYMENT_TARGET: "12"
+      CIBW_CONFIG_SETTINGS: setup-args="--vsenv"
+      CIBW_MANYLINUX_X86_64_IMAGE: manylinux2014
 
     steps:
-      - name: Download sdist
+      - name: Download sdist ${{ needs.build_sdist.outputs.SDIST_NAME }}
         uses: actions/download-artifact@v4
         with:
           name: cibw-sdist
           path: dist/
-
-      - uses: yezz123/setup-uv@v4
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.19
