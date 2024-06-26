@@ -13,6 +13,42 @@ permissions:
   contents: read
 
 jobs:
+  run_tests:
+    name: Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: System Dependencies
+        run: >-
+          sudo apt-get update && 
+          sudo apt-get install -y 
+          libxcb-xinerama0 
+          libxkbcommon-x11-0 
+          libgl1-mesa-glx 
+          libegl1 
+          libopengl0
+          libxcb-icccm4 
+          libxcb-image0 
+          libxcb-keysyms1 
+          libxcb-randr0 
+          libxcb-render-util0 
+          libxcb-xinerama0 
+          libxcb-xfixes0 
+          x11-utils 
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Hatch
+        run: pipx install hatch
+
+      - name: Lint Checks
+        run: hatch fmt --check
+
+      - name: Unit Tests
+        run: hatch test --all
+
+
   build_sdist:
     name: Build SDist
     runs-on: ubuntu-latest
@@ -43,7 +79,9 @@ jobs:
           if-no-files-found: error
 
   build_wheels:
-    needs: build_sdist
+    needs:
+      - run_tests
+      - build_sdist
 
     name: Build wheels on ${{ matrix.os }} for ${{ matrix.cibw_archs }}
     runs-on: ${{ matrix.os }}
