@@ -103,6 +103,8 @@ jobs:
       MACOSX_DEPLOYMENT_TARGET: "12"
 
     steps:
+      - run: "python -c \"import sys; print(f'Endianness: {sys.byteorder}')\""
+
       - name: Download sdist ${{ needs.build_sdist.outputs.SDIST_NAME }}
         uses: actions/download-artifact@v4
         with:
