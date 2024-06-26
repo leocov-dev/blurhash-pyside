@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core>=0.3.3", "nanobind"]
+requires = ["scikit-build-core>=0.3.3", "pybind11"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -36,7 +36,7 @@ Releases = "https://github.com/Leonardo Covarrubias/blurhash-pyside/releases"
 type = "virtual"
 path = ".venv"
 extra-dependencies = [
-    "nanobind",
+    "pybind11",
     "pytest",
     "PySide6",
 ]
@@ -64,7 +64,11 @@ experimental = true
 [tool.scikit-build]
 cmake.version = ">=3.27"
 cmake.build-type = "Release"
-wheel.py-api = "cp39"
+wheel.cmake = true
+wheel.license-files = ["LICENSE"]
+sdist.reproducible = true
+sdist.cmake = true
+
 
 # ------------------------------
 # cibuildwheel -----------------------
@@ -78,12 +82,3 @@ build-frontend = "build[uv]"
 skip = "pp* *-win32 *_i686 *musllinux*"
 test-requires = "pytest PySide6"
 test-command = "pytest {project}/tests"
-
-[tool.cibuildwheel.linux]
-repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel} && pipx run abi3audit --strict --report {wheel}"
-
-[tool.cibuildwheel.macos]
-repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel} && pipx run abi3audit --strict --report {wheel}"
-
-[tool.cibuildwheel.windows]
-repair-wheel-command = "pipx run abi3audit --strict --report {wheel}"

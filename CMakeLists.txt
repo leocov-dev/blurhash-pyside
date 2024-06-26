@@ -3,7 +3,6 @@ cmake_minimum_required(VERSION 3.27)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
-set(PYBIND11_FINDPYTHON ON)
 set(MACOSX_DEPLOYMENT_TARGET 12)
 
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -17,20 +16,22 @@ project(${SKBUILD_PROJECT_NAME}
         LANGUAGES CXX)
 
 # cmake finds python
-find_package(Python 3.9 COMPONENTS Interpreter Development.Module REQUIRED)
+find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
+
+message("SOABI: ${Python_SOABI}")
 
 # Detect the installed nanobind package and import it into CMake
 execute_process(
-        COMMAND "${Python_EXECUTABLE}" -m nanobind --cmake_dir
-        OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE NB_DIR)
-list(APPEND CMAKE_PREFIX_PATH "${NB_DIR}")
-find_package(nanobind CONFIG REQUIRED)
+        COMMAND "${Python_EXECUTABLE}" -m pybind11 --cmakedir
+        OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE PYB_DIR)
+list(APPEND CMAKE_PREFIX_PATH "${PYB_DIR}")
+find_package(pybind11 CONFIG REQUIRED)
 
 # Add `extern` dependencies
 add_subdirectory(extern/blurhash-cpp)
 
 # Configure Module
-nanobind_add_module(_core MODULE src/wrapper.cpp)
+pybind11_add_module(_core MODULE src/wrapper.cpp)
 target_link_libraries(_core PRIVATE
         blurhash-cpp
 )

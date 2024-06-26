@@ -2,10 +2,7 @@
 // Created by Leonardo Covarrubias on 6/23/24.
 //
 
-#include <nanobind/nanobind.h>
-#include <nanobind/stl/vector.h>
-#include <nanobind/stl/string_view.h>
-#include <nanobind/stl/string.h>
+#include <pybind11/pybind11.h>
 #include <blurhash-cpp/blurhash.hpp>
 #include <utility>
 
@@ -13,7 +10,7 @@
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
 
 
-namespace py = nanobind;
+namespace py = pybind11;
 using namespace py::literals;
 
 uint8_t bytesPerChannel = 4;
@@ -21,7 +18,7 @@ uint8_t bytesPerChannel = 4;
 using IntVector = std::vector<uint8_t>;
 using String = std::string_view;
 
-NB_MODULE(_core, m) {
+PYBIND11_MODULE(_core, m) {
 
     m.def("decode", [](String blurhash, size_t width, size_t height) {
               blurhash::Image img = blurhash::decode(

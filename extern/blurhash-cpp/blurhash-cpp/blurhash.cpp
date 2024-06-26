@@ -236,7 +236,7 @@ namespace {
     std::vector<float>
     bases_for(size_t dimension, size_t components) {
         std::vector<float> bases(dimension * components, 0.f);
-        auto scale = std::numbers::pi_v<float> / float(dimension);
+        auto scale = M_PI / float(dimension);
         for (size_t x = 0; x < dimension; x++) {
             for (size_t nx = 0; nx < size_t(components); nx++) {
                 bases[x * components + nx] = std::cos(scale * float(nx * x));
