@@ -81,7 +81,7 @@ sdist.cmake = true
 # ------------------------------
 # cibuildwheel -----------------------
 [tool.cibuildwheel]
-build-frontend = "build[uv]"
+build-frontend = "build"
 before-build = "rm -rf {packakge}/build"
 build = "cp39-* cp310-* cp311-* cp312-*"
 # skip platforms
