@@ -2,10 +2,10 @@
 // Created by Leonardo Covarrubias on 6/23/24.
 //
 
-#define PYBIND11_DETAILED_ERROR_MESSAGES
-
-#include <pybind11/pybind11.h>
-#include <pybind11/stl.h>
+#include <nanobind/nanobind.h>
+#include <nanobind/stl/vector.h>
+#include <nanobind/stl/string_view.h>
+#include <nanobind/stl/string.h>
 #include <blurhash-cpp/blurhash.hpp>
 #include <utility>
 
@@ -13,13 +13,17 @@
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
 
 
-namespace py = pybind11;
+namespace py = nanobind;
+using namespace py::literals;
 
 uint8_t bytesPerChannel = 4;
 
-PYBIND11_MODULE(_core, m) {
+using IntVector = std::vector<uint8_t>;
+using String = std::string_view;
 
-    m.def("decode", [](std::string_view blurhash, size_t width, size_t height) {
+NB_MODULE(_core, m) {
+
+    m.def("decode", [](String blurhash, size_t width, size_t height) {
               blurhash::Image img = blurhash::decode(
                       blurhash,
                       width, height,
@@ -27,13 +31,12 @@ PYBIND11_MODULE(_core, m) {
               );
               return img.image;
           },
-          py::arg("blurhash"),
-          py::arg("width"),
-          py::arg("height")
+          "blurhash"_a,
+          "width"_a, "height"_a
     );
 
     m.def("encode", [](
-                  std::vector<uint8_t> image,
+                  IntVector image,
                   size_t width, size_t height,
                   int components_x, int components_y
           ) {
@@ -44,11 +47,9 @@ PYBIND11_MODULE(_core, m) {
                       3
               );
           },
-          py::arg("image"),
-          py::arg("width"),
-          py::arg("height"),
-          py::arg("components_x"),
-          py::arg("components_y")
+          "image"_a,
+          "width"_a, "height"_a,
+          "components_x"_a, "components_y"_a
     );
 
 #ifdef VERSION_INFO

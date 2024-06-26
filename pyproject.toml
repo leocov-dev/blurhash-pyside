@@ -1,6 +1,6 @@
 [build-system]
-requires = ["hatchling", "scikit-build-core>=0.3.3"]
-build-backend = "hatchling.build"
+requires = ["scikit-build-core>=0.3.3", "nanobind"]
+build-backend = "scikit_build_core.build"
 
 [project]
 name = "blurhash-pyside"
@@ -36,6 +36,7 @@ Releases = "https://github.com/Leonardo Covarrubias/blurhash-pyside/releases"
 type = "virtual"
 path = ".venv"
 extra-dependencies = [
+    "nanobind",
     "pytest",
     "PySide6",
 ]

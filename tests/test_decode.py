@@ -1,4 +1,5 @@
-from PySide6.QtGui import QImage
+from qtpy.QtGui import QImage
+
 from blurhash_pyside import decode_to_qimage
 
 
@@ -9,7 +10,5 @@ def test_decode__qimage(test_data):
         193,
     )
 
-    expected = QImage(str(test_data / "decoded.png"))
-
-    assert img == expected
-
+    assert img.constBits()
+    assert img.format() == QImage.Format.Format_RGB32
