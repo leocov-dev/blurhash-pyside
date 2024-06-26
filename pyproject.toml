@@ -96,10 +96,10 @@ test-command = "pytest {project}/tests"
 [tool.cibuildwheel.windows]
 
 [tool.cibuildwheel.macos]
-test-extras = "dev"
-text-requires = [
-    "PySide2"
-]
 
 [tool.cibuildwheel.linux]
-
+test-extras = "dev"
+test-requires = [
+    "PySide6",
+    "PySide2",
+]
