@@ -13,6 +13,9 @@ jobs:
 
     runs-on: ubuntu-latest
 
+    outputs:
+      TAG: ${{ steps.vars.outputs.tag }}
+
     steps:
       - name: Get Version Tag
         id: vars
@@ -126,12 +129,12 @@ jobs:
       - name: Draft Release
         uses: release-drafter/release-drafter@v6
         with:
-          tag: ${{ steps.vars.outputs.tag }}
-          version: ${{ steps.vars.outputs.tag }}
+          tag: ${{ needs.release-checks.outputs.TAG }}
+          version: ${{ needs.release-checks.outputs.TAG }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload Release Asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload --clobber ${{ steps.vars.outputs.tag }} dist/*
+        run: gh release upload --clobber ${{ needs.release-checks.outputs.TAG }} dist/*

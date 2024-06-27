@@ -145,7 +145,7 @@ test-command = "pytest {project}/tests"
 [tool.cibuildwheel.windows]
 
 [tool.cibuildwheel.macos]
-environment = { MACOSX_DEPLOYMENT_TARGET = "12" }
+environment = { MACOSX_DEPLOYMENT_TARGET = "11" }
 
 [tool.cibuildwheel.linux]
 manylinux-x86_64-image = "manylinux_2_28"
