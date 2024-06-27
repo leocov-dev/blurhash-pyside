@@ -8,7 +8,7 @@ def main():
     app = QApplication()
 
     main_window = QMainWindow()
-    main_window.setWindowTitle("PySide6 Blurhash Example")
+    main_window.setWindowTitle("PySide2 Blurhash Example")
     main_window.setCentralWidget(BlurhashDemo(parent=main_window))
     main_window.show()
 
