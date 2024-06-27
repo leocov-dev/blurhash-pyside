@@ -13,5 +13,7 @@ def test_decode_to_qimage(test_data):
 
     assert img.constBits()
     assert img.format() == QImage.Format.Format_RGB32
+    assert img.width() == 301
+    assert img.height() == 193
 
-    assert_qimages_equal(img, QImage(str(test_data / "decoded.bmp")))
+    assert_qimages_equal(img, QImage(str(test_data / "decoded.png")))

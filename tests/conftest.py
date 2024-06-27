@@ -15,8 +15,8 @@ def test_data():
 
 
 def _qimage_to_cv_mat(img: QImage) -> cv2.Mat:
-    img = img.convertToFormat(QImage.Format.Format_RGBX8888)
-    arr = np.array(img.constBits(), copy=True).reshape(img.height(), img.width(), 4)
+    rgb32 = img.convertToFormat(QImage.Format.Format_RGB32)
+    arr = np.array(rgb32.constBits(), copy=True).reshape(rgb32.height(), rgb32.width(), 4)
     return cv2.cvtColor(arr, cv2.COLOR_BGRA2RGB)
 
 

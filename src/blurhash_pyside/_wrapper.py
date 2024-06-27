@@ -3,6 +3,7 @@ from typing import NamedTuple
 from qtpy.QtCore import QSize, Qt
 from qtpy.QtGui import QImage, QPixmap
 
+from . import BlurhashDecodingError, BlurhashEncodingError
 from ._core import decode, encode
 
 
@@ -11,6 +12,9 @@ def decode_to_qimage(blurhash: str, width: int, height: int) -> QImage:
     Decode a Blurhash string to a QImage.
     """
     data = decode(blurhash, width, height)
+    if len(data) < height * width * 4:
+        raise BlurhashDecodingError
+
     return QImage(bytes(data), width, height, width * 4, QImage.Format.Format_RGB32).rgbSwapped()
 
 
@@ -46,15 +50,18 @@ def encode_qimage(image: QImage, components: Components, downsample: int = 1) ->
         )
 
     if not image.constBits():
-        raise ValueError("Image to encode seems invalid")
+        raise BlurhashEncodingError("QImage to encode seems invalid")
 
     bpp = 4
     size = image.width() * image.height() * bpp
     data = list(image.constBits())
 
     ordered = []
-    for i in range(0, size, bpp):
-        ordered.extend(data[i : i + bpp][0:3])
+    try:
+        for i in range(0, size, bpp):
+            ordered.extend(data[i : i + bpp][0:3])
+    except Exception as e:
+        raise BlurhashEncodingError("problem organizing raw image data") from e
 
     bh_str = encode(
         ordered,
@@ -65,7 +72,7 @@ def encode_qimage(image: QImage, components: Components, downsample: int = 1) ->
     )
 
     if not bh_str:
-        raise ValueError("Blurhash result was empty")
+        raise BlurhashEncodingError("Blurhash result was empty")
 
     return bh_str
 
