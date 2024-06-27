@@ -4,6 +4,8 @@
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/leocov-dev/blurhash-pyside/ci.yml)
 ![GitHub Release](https://img.shields.io/github/v/release/leocov-dev/blurhash-pyside)
 ![PyPI - Version](https://img.shields.io/pypi/v/blurhash-pyside)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/blurhash-pyside)
+![PyPI - Wheel](https://img.shields.io/pypi/wheel/blurhash-pyside)
 
 
 Blurhash encoding and decoding for PySide2/6
