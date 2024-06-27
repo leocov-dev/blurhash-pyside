@@ -243,7 +243,7 @@ namespace blurhash {
     decode(std::string_view blurhash, size_t width, size_t height, uint8_t bytesPerPixel) noexcept {
         Image i{};
 
-        if (blurhash.size() < 10)
+        if (blurhash.size() < 6)
             return i;
 
         Components components{};

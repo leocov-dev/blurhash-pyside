@@ -12,6 +12,7 @@ def decode_to_qimage(blurhash: str, width: int, height: int) -> QImage:
     Decode a Blurhash string to a QImage.
     """
     data = decode(blurhash, width, height)
+
     if len(data) < height * width * 4:
         raise BlurhashDecodingError
 
@@ -31,7 +32,7 @@ class Components(NamedTuple):
     y: int
 
     def valid(self) -> bool:
-        return 9 >= self.x > 1 and 9 >= self.y > 1
+        return 9 >= self.x >= 1 and 9 >= self.y >= 1
 
 
 def encode_qimage(image: QImage, components: Components, downsample: int = 1) -> str:

@@ -27,6 +27,7 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+    "build",
     "pybind11",
     "pytest",
     "opencv-python",
@@ -35,6 +36,9 @@ dev = [
 pyside6 = [
     "PySide6-Essentials"
 ]
+pyside2 = [
+    "PySide2"
+]
 
 [project.urls]
 Documentation = "https://github.com/Leonardo Covarrubias/blurhash-pyside#readme"
@@ -42,7 +46,8 @@ Issues = "https://github.com/Leonardo Covarrubias/blurhash-pyside/issues"
 Source = "https://github.com/Leonardo Covarrubias/blurhash-pyside"
 Releases = "https://github.com/Leonardo Covarrubias/blurhash-pyside/releases"
 
-# default ---------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# default ----------------------------------------------------------------------
 [tool.hatch.envs.default]
 type = "virtual"
 path = ".venv"
@@ -51,8 +56,20 @@ features = [
     "pyside6",
 ]
 
+# ------------------------------------------------------------------------------
+# examples env -----------------------------------------------------------------
+[tool.hatch.envs.pyside6]
+skip-install = false
+[tool.hatch.envs.pyside6.scripts]
+example = "python examples/pyside6-example.py"
 
-# default ---------------------------------------------------------------
+[tool.hatch.envs.pyside2]
+[tool.hatch.envs.pyside2.scripts]
+example = "python examples/pyside2-example.py"
+
+
+# ------------------------------------------------------------------------------
+# hatch-test -------------------------------------------------------------------
 [tool.hatch.envs.hatch-test]
 dev-mode = true
 features = [
@@ -62,15 +79,14 @@ features = [
 [[tool.hatch.envs.hatch-test.matrix]]
 python = ["3.12", "3.11", "3.10", "3.9"]
 
-
-# ------------------------------
-# pytest -----------------------
+# ------------------------------------------------------------------------------
+# pytest -----------------------------------------------------------------------
 [tool.pytest.ini_options]
 minversion = "6.0"
 testpaths = ["tests"]
 
-# ------------------------------
-# linting
+# ------------------------------------------------------------------------------
+# ruff ---# --------------------------------------------------------------------
 [tool.ruff.lint]
 extend-ignore = [
     "PLR2004",
@@ -90,9 +106,15 @@ extend-ignore = [
     "INP001",
     "ARG001",
 ]
+"examples/*" = [
+    "INP001",
+    "N802",
+    "E722",
+    "S110",
+]
 
-# ------------------------------
-# scikit -----------------------
+# ------------------------------------------------------------------------------
+# scikit -----------------------# ----------------------------------------------
 [tool.hatch.build.targets.wheel.hooks.scikit-build]
 experimental = true
 
@@ -105,8 +127,8 @@ sdist.reproducible = true
 sdist.cmake = true
 
 
-# ------------------------------
-# cibuildwheel -----------------------
+# ------------------------------------------------------------------------------
+# cibuildwheel -----------------------------------------------------------------
 [tool.cibuildwheel]
 build-frontend = "build"
 before-build = "rm -rf {packakge}/build"
