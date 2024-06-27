@@ -3,8 +3,8 @@ from typing import NamedTuple
 from qtpy.QtCore import QSize, Qt
 from qtpy.QtGui import QImage, QPixmap
 
-from . import BlurhashDecodingError, BlurhashEncodingError
 from ._core import decode, encode
+from .errors import BlurhashDecodingError, BlurhashEncodingError
 
 
 def decode_to_qimage(blurhash: str, width: int, height: int) -> QImage:
