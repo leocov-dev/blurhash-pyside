@@ -120,8 +120,11 @@ jobs:
           path: dist
           merge-multiple: true
 
+      - name: Display structure of downloaded files
+        run: ls -R dist/
+
       - name: Draft Release
-        uses: release-drafter/release-drafter@v5
+        uses: release-drafter/release-drafter@v6
         with:
           tag: ${{ steps.vars.outputs.tag }}
           version: ${{ steps.vars.outputs.tag }}
@@ -131,4 +134,4 @@ jobs:
       - name: Upload Release Asset
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release upload --clobber ${{ steps.vars.outputs.tag }} ./dist/*
+        run: gh release upload --clobber ${{ steps.vars.outputs.tag }} dist/*
