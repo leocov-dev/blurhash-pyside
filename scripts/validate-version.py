@@ -14,16 +14,17 @@ such as:
 
 Only intended to be used by CI pipeline.
 """
+
 import argparse
 import os
 import sys
-import toml
 from pathlib import Path
+
+import toml
 
 __repo = Path(__file__).parent.parent
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
     parser.add_argument("--check-tag", action="store_true")
 
@@ -31,7 +32,7 @@ if __name__ == "__main__":
 
     versions_to_match = {}
 
-    with open(__repo / "pyproject.toml", "r") as ppt:
+    with open(__repo / "pyproject.toml") as ppt:
         # project version string
         check_against = toml.load(ppt)["project"]["version"]
         versions_to_match["pyproject"] = check_against
@@ -40,7 +41,7 @@ if __name__ == "__main__":
         # git tag version in github workflows
         versions_to_match["git_tag"] = os.environ.get("TAG", "")
 
-    if not all([v == check_against for v in versions_to_match.values()]):
+    if not all(v == check_against for v in versions_to_match.values()):
         print(f"versions did not match: {versions_to_match}")
         sys.exit(1)
 
