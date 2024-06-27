@@ -1,12 +1,17 @@
 # blurhash-pyside
 
-> 🚧🚧🚧 This is a work in progress until there is a release 🚧🚧🚧
+![GitHub License](https://img.shields.io/github/license/leocov-dev/blurhash-pyside)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/leocov-dev/blurhash-pyside/ci.yml)
+![GitHub Release](https://img.shields.io/github/v/release/leocov-dev/blurhash-pyside)
+![PyPI - Version](https://img.shields.io/pypi/v/blurhash-pyside)
+
 
 Blurhash encoding and decoding for PySide2/6
 
-- Encode a QImage or QPixmap to a blurhash string
-- Decode a blruhash string to a QImage or QPixmap
+- Encode a QImage or QPixmap into a blurhash string
+- Decode a blruhash string into a QImage or QPixmap
 
+For more information about Blurhash visit their [official page](https://blurha.sh/).
 
 ## Local Development
 
@@ -15,17 +20,41 @@ Requirements:
 - Hatch
 - CMake 3.27+
 
-Clone the repository with submodules to get the `pybind11` dependency.
+Run the example:
 ```shell
-git clone --recursive https://github.com/leocov-dev/blurhash-pyside.git
+# choose one:
+hatch run pyside6:example
+
+# pyside2 may not be available for all python versions or platforms
+hatch run pyside2:example
 ```
 
-create a project relative `.venv/` dir
+### Setup your local environment
+
+Create a repo relative `.venv/` dir:
 ```shell
 hatch env create
 ```
 
-run tests
+Run the tests:
 ```shell
 hatch test
 ```
+
+Build the wheel for your platform:
+```shell
+hatch build -t wheel
+```
+
+The `cmake` project is not intended to be run on its own but it is possible to do it.
+The `pybind11` dependency will be available after creating the default virtual environment
+and passing its python executable path to `cmake` via `Python_EXECUTABLE`. Some IDE's may
+do this for you when a python environment is activated in their configuration.
+
+## Acknowledgements
+
+The core C++ code for the blurhash functions was source from https://github.com/Nheko-Reborn/blurhash
+under the Boost Software License. Some minor modifications were made.
+
+This project is made possible by [pybind11](https://github.com/pybind/pybind11) and [scikit-build-core](https://github.com/scikit-build/scikit-build-core). 
+Multi-platform wheels are generated using the [cibuildwheel](https://github.com/pypa/cibuildwheel) project.
