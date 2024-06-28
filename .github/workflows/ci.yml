@@ -39,14 +39,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Hatch
-        run: pipx install hatch
-
       - name: Lint Checks
-        run: hatch fmt --check
+        run: pipx run hatch fmt --check
 
       - name: Unit Tests
-        run: hatch test --all
+        run: pipx run hatch test --all
 
 
   build_sdist:

@@ -10,7 +10,6 @@ Assert that various version strings all match.
 such as:
 - git tag
 - pyproject.toml version
-- documentation version const
 
 Only intended to be used by CI pipeline.
 """
