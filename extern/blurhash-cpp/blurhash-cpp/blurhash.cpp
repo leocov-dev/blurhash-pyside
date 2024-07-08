@@ -58,7 +58,7 @@ namespace {
             ();
 
     std::string
-    encode83(uint value) {
+    encode83(uint32_t value) {
         std::string buffer;
 
         do {
@@ -70,16 +70,16 @@ namespace {
     }
 
     struct Components {
-        uint x, y;
+        uint32_t x, y;
     };
 
-    uint
+    uint32_t
     packComponents(const Components &c) noexcept {
         return (c.x - 1) + (c.y - 1) * 9;
     }
 
     Components
-    unpackComponents(uint c) noexcept {
+    unpackComponents(uint32_t c) noexcept {
         return {c % 9 + 1, c / 9 + 1};
     }
 
@@ -226,11 +226,11 @@ namespace {
     }
 
     std::vector<float>
-    bases_for(uint dimension, uint components) {
+    bases_for(uint32_t dimension, uint32_t components) {
         std::vector<float> bases(dimension * components, 0.f);
         auto scale = M_PI / float(dimension);
-        for (uint x = 0; x < dimension; x++) {
-            for (uint nx = 0; nx < components; nx++) {
+        for (uint32_t x = 0; x < dimension; x++) {
+            for (uint32_t nx = 0; nx < components; nx++) {
                 bases[x * components + nx] = std::cosf(static_cast<float>(scale) * float(nx * x));
             }
         }
@@ -240,7 +240,7 @@ namespace {
 
 namespace blurhash {
     Image
-    decode(std::string_view blurhash, uint width, uint height, uint bytesPerPixel) {
+    decode(std::string_view blurhash, uint32_t width, uint32_t height, uint32_t bytesPerPixel) {
         if (blurhash.length() < 6)
             throw std::invalid_argument("blurhash string invalid, too short.");
 
@@ -270,12 +270,12 @@ namespace blurhash {
         std::vector<float> basis_x = bases_for(width, components.x);
         std::vector<float> basis_y = bases_for(height, components.y);
 
-        for (uint y = 0; y < height; y++) {
-            for (uint x = 0; x < width; x++) {
+        for (uint32_t y = 0; y < height; y++) {
+            for (uint32_t x = 0; x < width; x++) {
                 Color c{};
 
-                for (uint nx = 0; nx < components.x; nx++) {
-                    for (uint ny = 0; ny < components.y; ny++) {
+                for (uint32_t nx = 0; nx < components.x; nx++) {
+                    for (uint32_t ny = 0; ny < components.y; ny++) {
                         float basis = basis_x[x * components.x + nx] *
                                       basis_y[y * components.y + ny];
                         c += values[nx + ny * components.x] * basis;
@@ -296,11 +296,11 @@ namespace blurhash {
 
     std::string
     encode(uint8_t *image,
-           uint width,
-           uint height,
-           uint components_x,
-           uint components_y,
-           uint bytesPerPixel) {
+           uint32_t width,
+           uint32_t height,
+           uint32_t components_x,
+           uint32_t components_y,
+           uint32_t bytesPerPixel) {
 
         if (width < 1 || height < 1)
             throw std::invalid_argument("height and width must be greater than 1.");
@@ -315,8 +315,8 @@ namespace blurhash {
         std::vector<float> basis_y = bases_for(height, components_y);
 
         std::vector<Color> factors(components_x * components_y, Color{});
-        for (uint y = 0; y < height; y++) {
-            for (uint x = 0; x < width; x++) {
+        for (uint32_t y = 0; y < height; y++) {
+            for (uint32_t x = 0; x < width; x++) {
                 Color linear{srgbToLinear(image[3 * x + 0 + y * width * bytesPerPixel]),
                              srgbToLinear(image[3 * x + 1 + y * width * bytesPerPixel]),
                              srgbToLinear(image[3 * x + 2 + y * width * bytesPerPixel])};
@@ -324,8 +324,8 @@ namespace blurhash {
                 // other half of normalization.
                 linear *= 1.f / static_cast<float>(width);
 
-                for (uint ny = 0; ny < components_y; ny++) {
-                    for (uint nx = 0; nx < components_x; nx++) {
+                for (uint32_t ny = 0; ny < components_y; ny++) {
+                    for (uint32_t nx = 0; nx < components_x; nx++) {
                         float basis = basis_x[x * components_x + nx] *
                                       basis_y[y * components_y + ny];
                         factors[ny * components_x + nx] += linear * basis;

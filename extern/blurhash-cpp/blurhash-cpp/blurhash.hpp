@@ -31,16 +31,16 @@
 
 namespace blurhash {
     struct Image {
-        uint width, height;
+        uint32_t width, height;
         std::vector<uint8_t> image; // pixels rgb
     };
 
 // Decode a blurhash to an image with size width*height
     Image
-    decode(std::string_view blurhash, uint width, uint height, uint bytesPerPixel = 3);
+    decode(std::string_view blurhash, uint32_t width, uint32_t height, uint32_t bytesPerPixel = 3);
 
 // Encode an image of rgb pixels (without padding) with size width*height into a blurhash with x*y
 // components
     std::string
-    encode(uint8_t *image, uint width, uint height, uint x, uint y, uint bytesPerPixel = 3);
+    encode(uint8_t *image, uint32_t width, uint32_t height, uint32_t x, uint32_t y, uint32_t bytesPerPixel = 3);
 }
