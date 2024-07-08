@@ -1,10 +1,9 @@
 import pytest
-
-from blurhash_pyside.errors import BlurhashDecodingError
 from conftest import assert_qimages_equal
 from qtpy.QtGui import QImage
 
 from blurhash_pyside import decode_to_qimage
+from blurhash_pyside.errors import BlurhashDecodingError
 
 
 def test_decode__qimage(test_data):
@@ -43,4 +42,3 @@ def test_decode__bad_string(blurhash_string: str):
 def test_decode__bad_size():
     with pytest.raises(BlurhashDecodingError):
         decode_to_qimage("LGFO~6Yk^6#M@-5c,1Ex@@or[j6o", 0, 0)
-
