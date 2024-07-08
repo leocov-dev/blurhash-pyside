@@ -1,10 +1,13 @@
+import pytest
+
+from blurhash_pyside.errors import BlurhashDecodingError
 from conftest import assert_qimages_equal
 from qtpy.QtGui import QImage
 
 from blurhash_pyside import decode_to_qimage
 
 
-def test_decode_to_qimage(test_data):
+def test_decode__qimage(test_data):
     img = decode_to_qimage(
         "LGFO~6Yk^6#M@-5c,1Ex@@or[j6o",
         301,
@@ -17,3 +20,27 @@ def test_decode_to_qimage(test_data):
     assert img.height() == 193
 
     assert_qimages_equal(img, QImage(str(test_data / "decoded.png")))
+
+
+@pytest.mark.parametrize(
+    "blurhash_string",
+    [
+        "",
+        " ",
+        "ABC",
+        "aghwmepjiSJDSFapispidfu",
+    ],
+)
+def test_decode__bad_string(blurhash_string: str):
+    with pytest.raises(BlurhashDecodingError):
+        decode_to_qimage(
+            blurhash_string,
+            64,
+            64,
+        )
+
+
+def test_decode__bad_size():
+    with pytest.raises(BlurhashDecodingError):
+        decode_to_qimage("LGFO~6Yk^6#M@-5c,1Ex@@or[j6o", 0, 0)
+

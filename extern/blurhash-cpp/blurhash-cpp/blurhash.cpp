@@ -58,7 +58,7 @@ namespace {
             ();
 
     std::string
-    encode83(int value) {
+    encode83(uint value) {
         std::string buffer;
 
         do {
@@ -70,16 +70,16 @@ namespace {
     }
 
     struct Components {
-        int x, y;
+        uint x, y;
     };
 
-    int
+    uint
     packComponents(const Components &c) noexcept {
         return (c.x - 1) + (c.y - 1) * 9;
     }
 
     Components
-    unpackComponents(int c) noexcept {
+    unpackComponents(uint c) noexcept {
         return {c % 9 + 1, c / 9 + 1};
     }
 
@@ -103,13 +103,14 @@ namespace {
 
     float
     decodeMaxAC(std::string_view maxAC) {
-        assert(maxAC.size() == 1);
+        if (maxAC.size() != 1)
+            throw std::invalid_argument("decode max AC value != 1");
         return decodeMaxAC(decode83(maxAC));
     }
 
     int
     encodeMaxAC(float maxAC) noexcept {
-        return std::max(0, std::min(82, int(maxAC * 166 - 0.5f)));
+        return std::clamp(int(maxAC * 166 - 0.5f), 0, 82);
     }
 
     float
@@ -125,7 +126,7 @@ namespace {
                 return std::pow((x + 0.055f) / 1.055f, 2.4f);
         };
 
-        return srgbToLinearF(static_cast<float>(std::min(255, static_cast<int>(value))) / 255.f);
+        return srgbToLinearF(static_cast<float>(std::clamp(static_cast<int>(value), 0, 255)) / 255.f);
     }
 
     uint8_t
@@ -141,7 +142,7 @@ namespace {
                 return std::pow(x, 1.0f / 2.4f) * 1.055f - 0.055f;
         };
 
-        return std::min(255, static_cast<int>(std::round(linearToSrgbF(value) * 255.f + 0.5f)));
+        return std::clamp(static_cast<int>(std::round(linearToSrgbF(value) * 255.f + 0.5f)), 0, 255);
     }
 
     struct Color {
@@ -181,7 +182,8 @@ namespace {
 
     Color
     decodeDC(std::string_view value) {
-        assert(value.size() == 4);
+        if (value.size() != 4)
+            throw std::invalid_argument("decode DC value size != 4");
         return decodeDC(decode83(value));
     }
 
@@ -198,11 +200,11 @@ namespace {
     int
     encodeAC(const Color &c, float maximumValue) {
         auto quantR =
-                int(std::max(0., std::min(18., std::floor(signPow(c.r / maximumValue, 0.5) * 9 + 9.5))));
+                int(std::clamp(std::floor(signPow(c.r / maximumValue, 0.5) * 9 + 9.5), 0., 18.));
         auto quantG =
-                int(std::max(0., std::min(18., std::floor(signPow(c.g / maximumValue, 0.5) * 9 + 9.5))));
+                int(std::clamp(std::floor(signPow(c.g / maximumValue, 0.5) * 9 + 9.5), 0., 18.));
         auto quantB =
-                int(std::max(0., std::min(18., std::floor(signPow(c.b / maximumValue, 0.5) * 9 + 9.5))));
+                int(std::clamp(std::floor(signPow(c.b / maximumValue, 0.5) * 9 + 9.5), 0., 18.));
 
         return quantR * 19 * 19 + quantG * 19 + quantB;
     }
@@ -224,12 +226,12 @@ namespace {
     }
 
     std::vector<float>
-    bases_for(size_t dimension, size_t components) {
+    bases_for(uint dimension, uint components) {
         std::vector<float> bases(dimension * components, 0.f);
         auto scale = M_PI / float(dimension);
-        for (size_t x = 0; x < dimension; x++) {
-            for (size_t nx = 0; nx < size_t(components); nx++) {
-                bases[x * components + nx] = std::cos(scale * float(nx * x));
+        for (uint x = 0; x < dimension; x++) {
+            for (uint nx = 0; nx < components; nx++) {
+                bases[x * components + nx] = std::cosf(static_cast<float>(scale) * float(nx * x));
             }
         }
         return bases;
@@ -238,43 +240,42 @@ namespace {
 
 namespace blurhash {
     Image
-    decode(std::string_view blurhash, size_t width, size_t height, uint8_t bytesPerPixel) noexcept {
+    decode(std::string_view blurhash, uint width, uint height, uint bytesPerPixel) {
+        if (blurhash.length() < 6)
+            throw std::invalid_argument("blurhash string invalid, too short.");
+
+        if (width < 1 || height < 1)
+            throw std::invalid_argument("width and height must be greater than 1.");
+
         Image i{};
 
-        if (blurhash.size() < 6)
-            return i;
-
-        Components components{};
         std::vector<Color> values;
         values.reserve(blurhash.size() / 2);
-        try {
-            components = unpackComponents(decode83(blurhash.substr(0, 1)));
 
-            if (components.x < 1 || components.y < 1 ||
-                blurhash.size() != lround(1 + 1 + 4 + (components.x * components.y - 1) * 2))
-                return {};
+        Components components = unpackComponents(decode83(blurhash.substr(0, 1)));
 
-            auto maxAC = decodeMaxAC(blurhash.substr(1, 1));
-            Color average = decodeDC(blurhash.substr(2, 4));
+        if (components.x < 1 || components.y < 1 ||
+            blurhash.size() != lround(1 + 1 + 4 + (components.x * components.y - 1) * 2))
+            throw std::invalid_argument("decoded components invalid");
 
-            values.push_back(average);
-            for (size_t c = 6; c < blurhash.size(); c += 2)
-                values.push_back(decodeAC(blurhash.substr(c, 2), maxAC));
-        } catch (std::invalid_argument &) {
-            return {};
-        }
+        auto maxAC = decodeMaxAC(blurhash.substr(1, 1));
+        Color average = decodeDC(blurhash.substr(2, 4));
+
+        values.push_back(average);
+        for (size_t c = 6; c < blurhash.size(); c += 2)
+            values.push_back(decodeAC(blurhash.substr(c, 2), maxAC));
 
         i.image = decltype(i.image)(height * width * bytesPerPixel, 255);
 
         std::vector<float> basis_x = bases_for(width, components.x);
         std::vector<float> basis_y = bases_for(height, components.y);
 
-        for (size_t y = 0; y < height; y++) {
-            for (size_t x = 0; x < width; x++) {
+        for (uint y = 0; y < height; y++) {
+            for (uint x = 0; x < width; x++) {
                 Color c{};
 
-                for (size_t nx = 0; nx < size_t(components.x); nx++) {
-                    for (size_t ny = 0; ny < size_t(components.y); ny++) {
+                for (uint nx = 0; nx < components.x; nx++) {
+                    for (uint ny = 0; ny < components.y; ny++) {
                         float basis = basis_x[x * components.x + nx] *
                                       basis_y[y * components.y + ny];
                         c += values[nx + ny * components.x] * basis;
@@ -295,21 +296,27 @@ namespace blurhash {
 
     std::string
     encode(uint8_t *image,
-           size_t width,
-           size_t height,
-           uint8_t components_x,
-           uint8_t components_y,
-           uint8_t bytesPerPixel) {
-        if (width < 1 || height < 1 || components_x < 1 || components_x > 9 || components_y < 1 ||
-            components_y > 9 || !image)
-            return "";
+           uint width,
+           uint height,
+           uint components_x,
+           uint components_y,
+           uint bytesPerPixel) {
+
+        if (width < 1 || height < 1)
+            throw std::invalid_argument("height and width must be greater than 1.");
+
+        if (components_x > 9 || components_x < 1 || components_y > 9 || components_y < 1)
+            throw std::invalid_argument("components must be in the range of 1-9.");
+
+        if (!image)
+            throw std::invalid_argument("must provide valid image argument.");
 
         std::vector<float> basis_x = bases_for(width, components_x);
         std::vector<float> basis_y = bases_for(height, components_y);
 
         std::vector<Color> factors(components_x * components_y, Color{});
-        for (size_t y = 0; y < height; y++) {
-            for (size_t x = 0; x < width; x++) {
+        for (uint y = 0; y < height; y++) {
+            for (uint x = 0; x < width; x++) {
                 Color linear{srgbToLinear(image[3 * x + 0 + y * width * bytesPerPixel]),
                              srgbToLinear(image[3 * x + 1 + y * width * bytesPerPixel]),
                              srgbToLinear(image[3 * x + 2 + y * width * bytesPerPixel])};
@@ -317,10 +324,10 @@ namespace blurhash {
                 // other half of normalization.
                 linear *= 1.f / static_cast<float>(width);
 
-                for (size_t ny = 0; ny < size_t(components_y); ny++) {
-                    for (size_t nx = 0; nx < size_t(components_x); nx++) {
-                        float basis = basis_x[x * size_t(components_x) + nx] *
-                                      basis_y[y * size_t(components_y) + ny];
+                for (uint ny = 0; ny < components_y; ny++) {
+                    for (uint nx = 0; nx < components_x; nx++) {
+                        float basis = basis_x[x * components_x + nx] *
+                                      basis_y[y * components_y + ny];
                         factors[ny * components_x + nx] += linear * basis;
                     }
                 }
@@ -335,7 +342,8 @@ namespace blurhash {
             factors[i] *= scale;
         }
 
-        assert(factors.size() > 0);
+        if (factors.empty())
+            throw std::length_error("error calculating factors.");
 
         auto dc = factors.front();
         factors.erase(factors.begin());
@@ -372,117 +380,3 @@ namespace blurhash {
         return h;
     }
 }
-
-#ifdef DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
-TEST_CASE("component packing")
-{
-        for (int i = 0; i < 9 * 9; i++)
-                CHECK(packComponents(unpackComponents(i)) == i);
-}
-
-TEST_CASE("encode83")
-{
-        CHECK(encode83(0) == "0");
-
-        CHECK(encode83(packComponents({4, 3})) == "L");
-        CHECK(encode83(packComponents({4, 4})) == "U");
-        CHECK(encode83(packComponents({8, 4})) == "Y");
-        CHECK(encode83(packComponents({2, 1})) == "1");
-}
-
-TEST_CASE("decode83")
-{
-        CHECK(packComponents({4, 3}) == decode83("L"));
-        CHECK(packComponents({4, 4}) == decode83("U"));
-        CHECK(packComponents({8, 4}) == decode83("Y"));
-        CHECK(packComponents({2, 1}) == decode83("1"));
-}
-
-TEST_CASE("maxAC")
-{
-        for (int i = 0; i < 83; i++)
-                CHECK(encodeMaxAC(decodeMaxAC(i)) == i);
-
-        CHECK(std::abs(decodeMaxAC("l"sv) - 0.289157f) < 0.00001f);
-}
-
-TEST_CASE("DC")
-{
-        CHECK(encode83(encodeDC(decodeDC("MF%n"))) == "MF%n"sv);
-        CHECK(encode83(encodeDC(decodeDC("HV6n"))) == "HV6n"sv);
-        CHECK(encode83(encodeDC(decodeDC("F5]+"))) == "F5]+"sv);
-        CHECK(encode83(encodeDC(decodeDC("Pj0^"))) == "Pj0^"sv);
-        CHECK(encode83(encodeDC(decodeDC("O2?U"))) == "O2?U"sv);
-}
-
-TEST_CASE("AC")
-{
-        auto h = "00%#MwS|WCWEM{R*bbWBbH"sv;
-        for (size_t i = 0; i < h.size(); i += 2) {
-                auto s           = h.substr(i, 2);
-                const auto maxAC = 0.289157f;
-                CHECK(leftPad(encode83(encodeAC(decodeAC(decode83(s), maxAC), maxAC)), 2) == s);
-        }
-}
-
-TEST_CASE("decode")
-{
-        blurhash::Image i1 = blurhash::decode("LEHV6nWB2yk8pyoJadR*.7kCMdnj", 360, 200);
-        CHECK(i1.width == 360);
-        CHECK(i1.height == 200);
-        CHECK(i1.image.size() == i1.height * i1.width * 3);
-        CHECK(i1.image[0] == 135);
-        CHECK(i1.image[1] == 164);
-        CHECK(i1.image[2] == 177);
-        CHECK(i1.image[10000] == 173);
-        CHECK(i1.image[10001] == 176);
-        CHECK(i1.image[10002] == 163);
-        // stbi_write_bmp("test.bmp", i1.width, i1.height, 3, (void *)i1.image.data());
-
-        i1 = blurhash::decode("LGF5]+Yk^6#M@-5c,1J5@[or[Q6.", 360, 200);
-        CHECK(i1.width == 360);
-        CHECK(i1.height == 200);
-        CHECK(i1.image.size() == i1.height * i1.width * 3);
-        // stbi_write_bmp("test2.bmp", i1.width, i1.height, 3, (void *)i1.image.data());
-
-        // invalid inputs
-        i1 = blurhash::decode(" LGF5]+Yk^6#M@-5c,1J5@[or[Q6.", 360, 200);
-        CHECK(i1.width == 0);
-        CHECK(i1.height == 0);
-        CHECK(i1.image.size() == 0);
-        i1 = blurhash::decode("  LGF5]+Yk^6#M@-5c,1J5@[or[Q6.", 360, 200);
-        CHECK(i1.width == 0);
-        CHECK(i1.height == 0);
-        CHECK(i1.image.size() == 0);
-
-        i1 = blurhash::decode("LGF5]+Yk^6# M@-5c,1J5@[or[Q6.", 360, 200);
-        CHECK(i1.width == 0);
-        CHECK(i1.height == 0);
-        CHECK(i1.image.size() == 0);
-        i1 = blurhash::decode("LGF5]+Yk^6#  M@-5c,1J5@[or[Q6.", 360, 200);
-        CHECK(i1.width == 0);
-        CHECK(i1.height == 0);
-        CHECK(i1.image.size() == 0);
-
-        i1 = blurhash::decode("LGF5]+Yk^6# @-5c,1J5@[or[Q6.", 360, 200);
-        CHECK(i1.width == 0);
-        CHECK(i1.height == 0);
-        CHECK(i1.image.size() == 0);
-        i1 = blurhash::decode(" GF5]+Yk^6#M@-5c,1J5@[or[Q6.", 360, 200);
-        CHECK(i1.width == 0);
-        CHECK(i1.height == 0);
-        CHECK(i1.image.size() == 0);
-}
-
-TEST_CASE("encode")
-{
-        CHECK(blurhash::encode(nullptr, 360, 200, 4, 3) == "");
-
-        std::vector<unsigned char> black(360 * 200 * 3, 0);
-        CHECK(blurhash::encode(black.data(), 0, 200, 4, 3) == "");
-        CHECK(blurhash::encode(black.data(), 360, 0, 4, 3) == "");
-        CHECK(blurhash::encode(black.data(), 360, 200, 0, 3) == "");
-        CHECK(blurhash::encode(black.data(), 360, 200, 4, 0) == "");
-        CHECK(blurhash::encode(black.data(), 360, 200, 4, 3) == "L00000fQfQfQfQfQfQfQfQfQfQfQ");
-}
-#endif

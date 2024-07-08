@@ -22,7 +22,7 @@ using String = std::string_view;
 
 PYBIND11_MODULE(_core, m) {
 
-    m.def("decode", [](String blurhash, size_t width, size_t height) {
+    m.def("decode", [](String blurhash, int width, int height) {
               py::scoped_ostream_redirect stream(
               std::cout, py::module_::import("sys").attr("stdout"));
               blurhash::Image img = blurhash::decode(
@@ -38,7 +38,7 @@ PYBIND11_MODULE(_core, m) {
 
     m.def("encode", [](
                   IntVector image,
-                  size_t width, size_t height,
+                  int width, int height,
                   int components_x, int components_y
           ) {
               py::scoped_ostream_redirect stream(

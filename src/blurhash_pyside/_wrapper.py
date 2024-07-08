@@ -11,10 +11,13 @@ def decode_to_qimage(blurhash: str, width: int, height: int) -> QImage:
     """
     Decode a Blurhash string to a QImage.
     """
-    data = decode(blurhash.strip(), width, height)
+    try:
+        data = decode(blurhash.strip(), width, height)
+    except Exception as e:
+        raise BlurhashDecodingError(str(e)) from e
 
     if len(data) < height * width * 4:
-        raise BlurhashDecodingError
+        raise BlurhashDecodingError("decoded data size did not match expected height/width")
 
     return QImage(bytes(data), width, height, width * 4, QImage.Format.Format_RGB32).rgbSwapped()
 
@@ -39,7 +42,7 @@ def encode_qimage(image: QImage, components: Components, downsample: int = 1) ->
     """Encode a QImage to a Blurhash string"""
 
     if not components.valid():
-        raise ValueError(f"Components: {components} invalid")
+        raise BlurhashEncodingError(f"Components: {components} invalid")
 
     image = image.convertToFormat(QImage.Format.Format_RGB32).rgbSwapped()
 
@@ -64,13 +67,16 @@ def encode_qimage(image: QImage, components: Components, downsample: int = 1) ->
     except Exception as e:
         raise BlurhashEncodingError("problem organizing raw image data") from e
 
-    bh_str = encode(
-        ordered,
-        image.width(),
-        image.height(),
-        components.x,
-        components.y,
-    )
+    try:
+        bh_str = encode(
+            ordered,
+            image.width(),
+            image.height(),
+            components.x,
+            components.y,
+        )
+    except Exception as e:
+        raise BlurhashEncodingError(str(e)) from e
 
     if not bh_str:
         raise BlurhashEncodingError("Blurhash result was empty")
