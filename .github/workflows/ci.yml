@@ -13,6 +13,9 @@ permissions:
   contents: read
 
 jobs:
+
+
+  # -------------
   run_tests:
     name: Tests
     runs-on: ubuntu-latest
@@ -46,74 +49,6 @@ jobs:
         run: pipx run hatch test --all
 
 
-  build_sdist:
-    name: Build SDist
-    runs-on: ubuntu-latest
-    outputs:
-      SDIST_NAME: ${{ steps.sdist.outputs.SDIST_NAME }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build SDist
-        id: sdist
-        run: |
-          pipx run build --sdist
-          pipx run hatch run scripts/export-sdist-name.py
-
-      - name: Check metadata
-        run: pipx run twine check dist/*
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cibw-sdist
-          path: dist/*.tar.gz
-          if-no-files-found: error
-
-  build_wheels:
-    needs:
-      - run_tests
-      - build_sdist
-
-    name: Build wheels on ${{ matrix.os }} for ${{ matrix.cibw_archs }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      fail-fast: false
-      # macos-12 is an intel runner, macos-14 is apple silicon
-      matrix:
-        include:
-          - os: ubuntu-20.04
-            cibw_archs: "x86_64"
-          - os: windows-latest
-            cibw_archs: "auto64"
-          - os: macos-12
-            cibw_archs: "x86_64"
-          - os: macos-14
-            cibw_archs: "arm64"
-
-    env:
-      MACOSX_DEPLOYMENT_TARGET: "12"
-
-    steps:
-      - run: "python -c \"import sys; print(f'Endianness: {sys.byteorder}')\""
-
-      - name: Download sdist ${{ needs.build_sdist.outputs.SDIST_NAME }}
-        uses: actions/download-artifact@v4
-        with:
-          name: cibw-sdist
-          path: dist/
-
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.19
-        # configured in pyproject.toml [tool.cibuildwheel]
-        with:
-          package-dir: dist/${{ needs.build_sdist.outputs.SDIST_NAME }}
-        env:
-          CIBW_ARCHS: ${{ matrix.cibw_archs }}
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: cibw-wheels-${{ runner.os }}-${{ matrix.cibw_archs }}
-          path: ./wheelhouse/*.whl
-          if-no-files-found: error
-
+  # -------------
+  build:
+    uses: ./.github/workflows/_build.yml

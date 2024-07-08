@@ -4,8 +4,8 @@
 ![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/leocov-dev/blurhash-pyside/ci.yml)
 ![GitHub Release](https://img.shields.io/github/v/release/leocov-dev/blurhash-pyside)
 ![PyPI - Version](https://img.shields.io/pypi/v/blurhash-pyside)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/blurhash-pyside)
 ![PyPI - Wheel](https://img.shields.io/pypi/wheel/blurhash-pyside)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/blurhash-pyside)
 
 
 Blurhash encoding and decoding for PySide2/6
@@ -52,6 +52,13 @@ The `cmake` project is not intended to be run on its own but it is possible to d
 The `pybind11` dependency will be available after creating the default virtual environment
 and passing its python executable path to `cmake` via `Python_EXECUTABLE`. Some IDE's may
 do this for you when a python environment is activated in their configuration.
+
+Manual CMake build
+```shell
+
+cmake --build cmake-build-release -j 8
+cmake --install cmake-build-release --prefix src
+```
 
 ## Acknowledgements
 

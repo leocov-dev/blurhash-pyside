@@ -11,7 +11,7 @@ def decode_to_qimage(blurhash: str, width: int, height: int) -> QImage:
     """
     Decode a Blurhash string to a QImage.
     """
-    data = decode(blurhash, width, height)
+    data = decode(blurhash.strip(), width, height)
 
     if len(data) < height * width * 4:
         raise BlurhashDecodingError

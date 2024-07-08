@@ -14,7 +14,7 @@ from qtpy.QtWidgets import (
     QWidget,
 )
 
-from blurhash_pyside import Components, decode_to_qpixmap, encode_qpixmap
+from blurhash_pyside import Components, decode_to_qpixmap, encode_qpixmap, errors
 
 
 class ImgPreview(QWidget):
@@ -49,7 +49,8 @@ class ImgPreview(QWidget):
             p.setRenderHint(QPainter.RenderHint.TextAntialiasing)
             p.setPen(QPen(self.palette().color(QPalette.ColorRole.Text)))
             p.setFont(self.font())
-            p.drawText(self.rect(), self._placeholder_text, Qt.AlignmentFlag.AlignCenter)
+            # TODO: center text
+            p.drawText(self.rect(), self._placeholder_text)
 
             pen = QPen(self.palette().color(QPalette.ColorRole.Window))
             pen.setWidth(4)
@@ -197,13 +198,22 @@ class DecodeDemo(QWidget):
         # ----
         self._bh_string.textChanged.connect(lambda: self._update_blurhash())
 
+        self._clear.clicked.connect(lambda: self._bh_string.clear())
+
     def _update_blurhash(self):
         if not self._bh_string.text():
+            self._decoded.clear()
             return
 
-        decoded = decode_to_qpixmap(self._bh_string.text(), self._decoded.width(), self._decoded.height())
-        if decoded:
-            self._decoded.setPixmap(decoded)
+        try:
+            decoded = decode_to_qpixmap(self._bh_string.text(), self._decoded.width(), self._decoded.height())
+            if decoded:
+                self._decoded.setPixmap(decoded)
+        except errors.BlurhashDecodingError:
+            pix = QPixmap(32, 32)
+            pix.fill("red")
+            # TODO: better error pixmap
+            self._decoded.setPixmap(pix)
 
     def resizeEvent(self, event):
         super().resizeEvent(event)

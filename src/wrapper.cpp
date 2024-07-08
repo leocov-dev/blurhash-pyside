@@ -4,8 +4,9 @@
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
-#include <blurhash-cpp/blurhash.hpp>
+#include <pybind11/iostream.h>
 #include <utility>
+#include "blurhash-cpp/blurhash.hpp"
 
 #define STRINGIFY(x) #x
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
@@ -22,6 +23,8 @@ using String = std::string_view;
 PYBIND11_MODULE(_core, m) {
 
     m.def("decode", [](String blurhash, size_t width, size_t height) {
+              py::scoped_ostream_redirect stream(
+              std::cout, py::module_::import("sys").attr("stdout"));
               blurhash::Image img = blurhash::decode(
                       blurhash,
                       width, height,
@@ -38,6 +41,8 @@ PYBIND11_MODULE(_core, m) {
                   size_t width, size_t height,
                   int components_x, int components_y
           ) {
+              py::scoped_ostream_redirect stream(
+              std::cout, py::module_::import("sys").attr("stdout"));
               return blurhash::encode(
                       image.data(),
                       width, height,

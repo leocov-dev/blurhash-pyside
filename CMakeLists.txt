@@ -4,15 +4,19 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(MACOSX_DEPLOYMENT_TARGET 11)
-
+if (DEFINED SKBUILD_PROJECT_VERSION)
+    set(VERSION ${SKBUILD_PROJECT_VERSION})
+else ()
+    set(VERSION 0.1.0)
+endif ()
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
     set_property(CACHE CMAKE_BUILD_TYPE PROPERTY STRINGS "Debug" "Release" "MinSizeRel" "RelWithDebInfo")
-endif()
+endif ()
 
 # define project
-project(${SKBUILD_PROJECT_NAME}
-        VERSION ${SKBUILD_PROJECT_VERSION}
+project(blurhash-pyside
+        VERSION ${VERSION}
         LANGUAGES CXX)
 
 # cmake finds python
@@ -20,7 +24,7 @@ find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
 
 message("SOABI: ${Python_SOABI}")
 
-# Detect the installed nanobind package and import it into CMake
+# Detect the installed pybind package and import it into CMake
 execute_process(
         COMMAND "${Python_EXECUTABLE}" -m pybind11 --cmakedir
         OUTPUT_STRIP_TRAILING_WHITESPACE OUTPUT_VARIABLE PYB_DIR)
@@ -40,4 +44,4 @@ target_link_libraries(_core PRIVATE
 target_compile_definitions(_core PRIVATE VERSION_INFO=${PROJECT_VERSION})
 
 # install the module binary, scikit will put this in the venv when in local dev mode
-install(TARGETS _core DESTINATION ${SKBUILD_PROJECT_NAME})
+install(TARGETS _core DESTINATION blurhash_pyside)

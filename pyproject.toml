@@ -64,6 +64,8 @@ skip-install = false
 example = "python examples/pyside6-example.py"
 
 [tool.hatch.envs.pyside2]
+python = "3.9"
+features = ["pyside2"]
 [tool.hatch.envs.pyside2.scripts]
 example = "python examples/pyside2-example.py"
 
@@ -72,10 +74,12 @@ example = "python examples/pyside2-example.py"
 # hatch-test -------------------------------------------------------------------
 [tool.hatch.envs.hatch-test]
 dev-mode = true
-features = [
-    "dev",
-    "pyside6"
+extra-dependencies = [
+    "opencv-python",
+    "scikit-image",
+    "pyside6",
 ]
+
 [[tool.hatch.envs.hatch-test.matrix]]
 python = ["3.12", "3.11", "3.10", "3.9"]
 
@@ -86,7 +90,7 @@ minversion = "6.0"
 testpaths = ["tests"]
 
 # ------------------------------------------------------------------------------
-# ruff ---# --------------------------------------------------------------------
+# ruff -------------------------------------------------------------------------
 [tool.ruff.lint]
 extend-ignore = [
     "PLR2004",

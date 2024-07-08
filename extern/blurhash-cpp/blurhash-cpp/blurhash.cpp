@@ -25,12 +25,13 @@
 
 #include "blurhash.hpp"
 
-#define M_PI        3.14159265358979323846264338327950288
 #include <cmath>
 #include <algorithm>
 #include <array>
 #include <cassert>
 #include <stdexcept>
+
+#define M_PI        3.14159265358979323846264338327950288
 
 using namespace std::literals;
 
@@ -47,9 +48,6 @@ namespace {
 
     constexpr std::array<int, 255> b83_to_int = []() constexpr {
         std::array<int, 255> a{};
-
-        for (auto &e: a)
-            e = -1;
 
         for (int i = 0; i < 83; i++) {
             a[static_cast<unsigned char>(int_to_b83[i])] = i;
@@ -115,7 +113,7 @@ namespace {
     }
 
     float
-    srgbToLinear(int value) noexcept {
+    srgbToLinear(uint8_t value) noexcept {
         auto srgbToLinearF = [](float x) {
             if (x <= 0.0f)
                 return 0.0f;
@@ -127,10 +125,10 @@ namespace {
                 return std::pow((x + 0.055f) / 1.055f, 2.4f);
         };
 
-        return srgbToLinearF(static_cast<float>(value) / 255.f);
+        return srgbToLinearF(static_cast<float>(std::min(255, static_cast<int>(value))) / 255.f);
     }
 
-    int
+    uint8_t
     linearToSrgb(float value) noexcept {
         auto linearToSrgbF = [](float x) -> float {
             if (x <= 0.0f)
@@ -143,7 +141,7 @@ namespace {
                 return std::pow(x, 1.0f / 2.4f) * 1.055f - 0.055f;
         };
 
-        return lround(linearToSrgbF(value) * 255.f + 0.5f);
+        return std::min(255, static_cast<int>(std::round(linearToSrgbF(value) * 255.f + 0.5f)));
     }
 
     struct Color {
@@ -283,12 +281,9 @@ namespace blurhash {
                     }
                 }
 
-                i.image[(y * width + x) * bytesPerPixel + 0] =
-                        static_cast<uint8_t>(linearToSrgb(c.r));
-                i.image[(y * width + x) * bytesPerPixel + 1] =
-                        static_cast<uint8_t>(linearToSrgb(c.g));
-                i.image[(y * width + x) * bytesPerPixel + 2] =
-                        static_cast<uint8_t>(linearToSrgb(c.b));
+                i.image[(y * width + x) * bytesPerPixel + 0] = linearToSrgb(c.r);
+                i.image[(y * width + x) * bytesPerPixel + 1] = linearToSrgb(c.g);
+                i.image[(y * width + x) * bytesPerPixel + 2] = linearToSrgb(c.b);
             }
         }
 
@@ -299,7 +294,12 @@ namespace blurhash {
     }
 
     std::string
-    encode(uint8_t *image, size_t width, size_t height, uint8_t components_x, uint8_t components_y, uint8_t bytesPerPixel) {
+    encode(uint8_t *image,
+           size_t width,
+           size_t height,
+           uint8_t components_x,
+           uint8_t components_y,
+           uint8_t bytesPerPixel) {
         if (width < 1 || height < 1 || components_x < 1 || components_x > 9 || components_y < 1 ||
             components_y > 9 || !image)
             return "";
