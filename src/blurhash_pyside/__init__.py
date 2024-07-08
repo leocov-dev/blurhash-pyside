@@ -12,6 +12,7 @@ from ._wrapper import (
 
 __version__ = "0.2.1"
 
+
 __all__ = [
     "__version__",
     "decode_to_qimage",
