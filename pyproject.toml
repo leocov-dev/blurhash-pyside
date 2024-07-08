@@ -41,10 +41,10 @@ pyside2 = [
 ]
 
 [project.urls]
-Documentation = "https://github.com/Leonardo Covarrubias/blurhash-pyside#readme"
-Issues = "https://github.com/Leonardo Covarrubias/blurhash-pyside/issues"
-Source = "https://github.com/Leonardo Covarrubias/blurhash-pyside"
-Releases = "https://github.com/Leonardo Covarrubias/blurhash-pyside/releases"
+Documentation = "https://github.com/leocov-dev/blurhash-pyside#readme"
+Issues = "https://github.com/leocov-dev/blurhash-pyside/issues"
+Source = "https://github.com/leocov-dev/blurhash-pyside"
+Releases = "https://github.com/leocov-dev/blurhash-pyside/releases"
 
 # ------------------------------------------------------------------------------
 # default ----------------------------------------------------------------------
