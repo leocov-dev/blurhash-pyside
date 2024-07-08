@@ -55,10 +55,4 @@ PYBIND11_MODULE(_core, m) {
           "width"_a, "height"_a,
           "components_x"_a, "components_y"_a
     );
-
-#ifdef VERSION_INFO
-    m.attr("__version__") = MACRO_STRINGIFY(VERSION_INFO);
-#else
-    m.attr("__version__") = "dev";
-#endif
 }

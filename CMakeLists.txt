@@ -7,7 +7,7 @@ set(MACOSX_DEPLOYMENT_TARGET 11)
 if (DEFINED SKBUILD_PROJECT_VERSION)
     set(VERSION ${SKBUILD_PROJECT_VERSION})
 else ()
-    set(VERSION 0.1.0)
+    set(VERSION "dev")
 endif ()
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
     set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build." FORCE)
@@ -16,7 +16,6 @@ endif ()
 
 # define project
 project(blurhash-pyside
-        VERSION ${VERSION}
         LANGUAGES CXX)
 
 # cmake finds python

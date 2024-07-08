@@ -1,10 +1,9 @@
 [build-system]
-requires = ["scikit-build-core>=0.3.3", "pybind11"]
+requires = ["scikit-build-core>=0.3.3", "pybind11", "hatchling"]
 build-backend = "scikit_build_core.build"
 
 [project]
 name = "blurhash-pyside"
-version = "0.2.0"
 description = "Encode or Decode Blurhash strings in a PySide2/6 project."
 readme = "README.md"
 license-files = { paths = ["LICENSE"] }
@@ -24,6 +23,7 @@ requires-python = ">=3.9.1"
 dependencies = [
     "qtpy~=2.4",
 ]
+dynamic = ["version"]
 
 [project.optional-dependencies]
 dev = [
@@ -45,6 +45,13 @@ Documentation = "https://github.com/leocov-dev/blurhash-pyside#readme"
 Issues = "https://github.com/leocov-dev/blurhash-pyside/issues"
 Source = "https://github.com/leocov-dev/blurhash-pyside"
 Releases = "https://github.com/leocov-dev/blurhash-pyside/releases"
+
+[tool.hatch.version]
+path = "src/blurhash_pyside/__init__.py"
+
+[tool.scikit-build.metadata.version]
+provider = "scikit_build_core.metadata.regex"
+input = "src/blurhash_pyside/__init__.py"
 
 # ------------------------------------------------------------------------------
 # default ----------------------------------------------------------------------
