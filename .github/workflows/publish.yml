@@ -44,7 +44,7 @@ jobs:
         run: |
           git config --global user.name 'GitHub Automation'
           git config --global user.email 'automation[bot]@leocov.com'
-          git add src/pyside_app_core/__init__.py
+          git add src/blurhash_pyside/__init__.py
           git commit -m "chore: version up to: ${{ steps.semver.outputs.nextStrict }}"
           git push
           git tag ${{ steps.semver.outputs.nextStrict }}
