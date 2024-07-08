@@ -126,4 +126,4 @@ jobs:
       # trusted publishing workflow:
       # https://docs.pypi.org/trusted-publishers/adding-a-publisher/
       - name: Publish To PyPi
-        uses: pypa/gh-action-pypi-publish@release/v1.9.0
+        uses: pypa/gh-action-pypi-publish@release/v1.9
