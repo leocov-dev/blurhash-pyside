@@ -231,7 +231,7 @@ namespace {
         auto scale = M_PI / float(dimension);
         for (uint32_t x = 0; x < dimension; x++) {
             for (uint32_t nx = 0; nx < components; nx++) {
-                bases[x * components + nx] = std::cosf(static_cast<float>(scale) * float(nx * x));
+                bases[x * components + nx] = std::cos(static_cast<float>(scale) * float(nx * x));
             }
         }
         return bases;
