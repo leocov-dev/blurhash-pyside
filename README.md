@@ -48,6 +48,11 @@ Build the wheel for your platform:
 hatch build -t wheel
 ```
 
+Recompile the C++ project
+```shell
+hatch run compile
+```
+
 The `cmake` project is not intended to be run on its own but it is possible to do it.
 The `pybind11` dependency will be available after creating the default virtual environment
 and passing its python executable path to `cmake` via `Python_EXECUTABLE`. Some IDE's may
@@ -55,7 +60,7 @@ do this for you when a python environment is activated in their configuration.
 
 Manual CMake build
 ```shell
-
+cmake -S . -B cmake-build-release -G Ninja
 cmake --build cmake-build-release -j 8
 cmake --install cmake-build-release --prefix src
 ```

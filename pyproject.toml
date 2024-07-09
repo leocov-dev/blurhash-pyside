@@ -65,18 +65,27 @@ features = [
     "pyside6",
 ]
 
+[tool.hatch.envs.default.scripts]
+compile = "python scripts/compile-cpp.py"
+
 # ------------------------------------------------------------------------------
 # examples env -----------------------------------------------------------------
 [tool.hatch.envs.pyside6]
 skip-install = false
 [tool.hatch.envs.pyside6.scripts]
-example = "python examples/pyside6-example.py"
+example = [
+    "hatch run compile",
+    "python examples/pyside6-example.py",
+]
 
 [tool.hatch.envs.pyside2]
 python = "3.9"
 features = ["pyside2"]
 [tool.hatch.envs.pyside2.scripts]
-example = "python examples/pyside2-example.py"
+example = [
+    "hatch run compile",
+    "python examples/pyside2-example.py",
+]
 
 
 # ------------------------------------------------------------------------------
@@ -87,6 +96,11 @@ extra-dependencies = [
     "opencv-python",
     "scikit-image",
     "pyside6",
+]
+[tool.hatch.envs.hatch-test.scripts]
+run = [
+    "python scripts/compile-cpp.py",
+    "pytest{env:HATCH_TEST_ARGS:} {args}",
 ]
 
 [[tool.hatch.envs.hatch-test.matrix]]
@@ -124,6 +138,9 @@ extend-ignore = [
     "N802",
     "E722",
     "S110",
+]
+"scripts/*" = [
+    "S607",
 ]
 
 # ------------------------------------------------------------------------------
