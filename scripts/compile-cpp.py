@@ -16,8 +16,6 @@ def main():
             str(_repo),
             "-B",
             "cmake-build-release",
-            "-G",
-            "Ninja",
         ]
     )
 
