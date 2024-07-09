@@ -97,11 +97,6 @@ extra-dependencies = [
     "scikit-image",
     "pyside6",
 ]
-[tool.hatch.envs.hatch-test.scripts]
-run = [
-    "python scripts/compile-cpp.py",
-    "pytest{env:HATCH_TEST_ARGS:} {args}",
-]
 
 [[tool.hatch.envs.hatch-test.matrix]]
 python = ["3.12", "3.11", "3.10", "3.9"]
