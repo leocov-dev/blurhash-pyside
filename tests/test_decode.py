@@ -1,8 +1,8 @@
 import pytest
 from conftest import assert_qimages_equal
-from qtpy.QtGui import QImage
 
 from blurhash_pyside import decode_to_qimage
+from blurhash_pyside._qt import QImage
 from blurhash_pyside.errors import BlurhashDecodingError
 
 

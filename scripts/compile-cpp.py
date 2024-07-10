@@ -1,4 +1,6 @@
-# build the cmake project, compile the code and install into local site-packages dir
+"""
+build the cmake project, compile the code and install into local site-packages dir
+"""
 
 import subprocess
 import sys

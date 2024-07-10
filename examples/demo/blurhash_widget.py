@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from qtpy.QtCore import QMimeData, Qt, Signal
-from qtpy.QtGui import QDragEnterEvent, QDropEvent, QImage, QPainter, QPaintEvent, QPalette, QPen, QPixmap
+from qtpy.QtGui import QDragEnterEvent, QDropEvent, QFontMetrics, QImage, QPainter, QPaintEvent, QPalette, QPen, QPixmap
 from qtpy.QtWidgets import (
     QApplication,
     QHBoxLayout,
@@ -18,6 +18,8 @@ from blurhash_pyside import Components, decode_to_qpixmap, encode_qpixmap, error
 
 
 class ImgPreview(QWidget):
+    """Preview an image or show placeholder text if no image"""
+
     def __init__(self, placeholder_text: str, parent: QWidget):
         super().__init__(parent=parent)
 
@@ -49,8 +51,9 @@ class ImgPreview(QWidget):
             p.setRenderHint(QPainter.RenderHint.TextAntialiasing)
             p.setPen(QPen(self.palette().color(QPalette.ColorRole.Text)))
             p.setFont(self.font())
-            # TODO: center text
-            p.drawText(self.rect(), self._placeholder_text)
+            fm = QFontMetrics(self.font())
+            text_rect = fm.boundingRect(self.rect(), Qt.AlignmentFlag.AlignCenter, self._placeholder_text)
+            p.drawText(text_rect, self._placeholder_text)
 
             pen = QPen(self.palette().color(QPalette.ColorRole.Window))
             pen.setWidth(4)
@@ -61,6 +64,8 @@ class ImgPreview(QWidget):
 
 
 class ComponentsEditor(QWidget):
+    """edit x/y blurhash components"""
+
     value_changed = Signal(object)
 
     def __init__(self, x: int, y: int, parent=QWidget):
@@ -92,6 +97,8 @@ class ComponentsEditor(QWidget):
 
 
 class EncodeDemo(QWidget):
+    """demonstrate blurhash encoding"""
+
     def __init__(self, parent: QWidget):
         super().__init__(parent=parent)
         self.setAcceptDrops(True)
@@ -174,6 +181,8 @@ class EncodeDemo(QWidget):
 
 
 class DecodeDemo(QWidget):
+    """demonstrate blurhash decoding"""
+
     def __init__(self, parent: QWidget):
         super().__init__(parent=parent)
 
@@ -212,7 +221,7 @@ class DecodeDemo(QWidget):
         except errors.BlurhashDecodingError:
             pix = QPixmap(32, 32)
             pix.fill("red")
-            # TODO: better error pixmap
+            # TODO: better error pixmap? draw X or msg text?
             self._decoded.setPixmap(pix)
 
     def resizeEvent(self, event):
@@ -221,6 +230,8 @@ class DecodeDemo(QWidget):
 
 
 class BlurhashDemo(QWidget):
+    """demo for blurhash encoding and decoding in 2 tabs"""
+
     def __init__(self, parent: QWidget):
         super().__init__(parent=parent)
         self.setMinimumSize(480, 480)

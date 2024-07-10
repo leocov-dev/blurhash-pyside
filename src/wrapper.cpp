@@ -1,15 +1,8 @@
-//
-// Created by Leonardo Covarrubias on 6/23/24.
-//
-
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <pybind11/iostream.h>
 #include <utility>
 #include "blurhash-cpp/blurhash.hpp"
-
-#define STRINGIFY(x) #x
-#define MACRO_STRINGIFY(x) STRINGIFY(x)
 
 
 namespace py = pybind11;

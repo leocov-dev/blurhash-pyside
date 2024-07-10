@@ -8,12 +8,22 @@
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/blurhash-pyside)
 
 
-Blurhash encoding and decoding for PySide2/6
+Blurhash encoding and decoding for PySide2/6. 
+This is a lightweight wrapper using the C++ encoding and decoding functions 
+provided by [Nheko-Reborn/blurhash](https://github.com/Nheko-Reborn/blurhash).
 
 - Encode a QImage or QPixmap into a blurhash string
 - Decode a blruhash string into a QImage or QPixmap
 
 For more information about Blurhash visit their [official page](https://blurha.sh/).
+
+## Dependencies
+
+This project has no external dependencies other than that you must provide 
+either PySide2 or PySide6 in your own project.
+
+The library is pre-compiled for popular platforms and recent Python versions. 
+See the [Releases](https://github.com/leocov-dev/blurhash-pyside/releases) or [PyPi](https://pypi.org/project/blurhash-pyside/) page for available wheels.
 
 ## Local Development
 
@@ -48,7 +58,7 @@ Build the wheel for your platform:
 hatch build -t wheel
 ```
 
-Recompile the C++ project
+Recompile the C++ project:
 ```shell
 hatch run compile
 ```
@@ -68,7 +78,7 @@ cmake --install cmake-build-release --prefix src
 ## Acknowledgements
 
 The core C++ code for the blurhash functions was source from https://github.com/Nheko-Reborn/blurhash
-under the Boost Software License. Some minor modifications were made.
+under the Boost Software License. Some minor [modifications](extern/blurhash-cpp/README.md) were made.
 
 This project is made possible by [pybind11](https://github.com/pybind/pybind11) and [scikit-build-core](https://github.com/scikit-build/scikit-build-core). 
 Multi-platform wheels are generated using the [cibuildwheel](https://github.com/pypa/cibuildwheel) project.

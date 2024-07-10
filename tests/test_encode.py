@@ -1,9 +1,9 @@
 from pathlib import Path
 
 import pytest
-from qtpy.QtGui import QImage
 
 from blurhash_pyside import Components, encode_qimage
+from blurhash_pyside._qt import QImage
 from blurhash_pyside.errors import BlurhashEncodingError
 
 

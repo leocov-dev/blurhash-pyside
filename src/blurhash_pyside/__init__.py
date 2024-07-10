@@ -1,6 +1,3 @@
-# SPDX-FileCopyrightText: 2024-present Leonardo Covarrubias <leo@leocov.com>
-#
-# SPDX-License-Identifier: MIT
 from . import errors
 from ._wrapper import (
     Components,

@@ -1,6 +1,7 @@
 # /// script
 # requires-python = ">=3.9,<3.11"
 # ///
+
 #  License agreement for matplotlib versions 1.3.0 and later
 # =========================================================
 #

@@ -1,9 +1,7 @@
 from typing import NamedTuple
 
-from qtpy.QtCore import QSize, Qt
-from qtpy.QtGui import QImage, QPixmap
-
 from ._core import decode, encode
+from ._qt import QImage, QPixmap, QSize, Qt
 from .errors import BlurhashDecodingError, BlurhashEncodingError
 
 

@@ -3,8 +3,9 @@ from pathlib import Path
 import cv2
 import numpy as np
 import pytest
-from qtpy.QtGui import QImage
 from skimage.metrics import structural_similarity
+
+from blurhash_pyside._qt import QImage
 
 _tests_data_dir = Path(__file__).parent / "data"
 
