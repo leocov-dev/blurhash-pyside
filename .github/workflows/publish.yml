@@ -8,7 +8,7 @@ jobs:
 
   # -------------
   version-up:
-    name: Create A Release
+    name: Calculate Next Version
     if: github.ref == 'refs/heads/main'
 
     permissions:
@@ -45,7 +45,7 @@ jobs:
           git config --global user.name 'GitHub Automation'
           git config --global user.email 'automation[bot]@leocov.com'
           git add src/blurhash_pyside/__init__.py
-          git commit -m "chore: version up to: ${{ steps.semver.outputs.nextStrict }}"
+          git commit -m "chore(release): version up to: ${{ steps.semver.outputs.nextStrict }}"
           git push
           git tag ${{ steps.semver.outputs.nextStrict }}
           git push --tags
@@ -55,6 +55,8 @@ jobs:
   build:
     needs: [ version-up ]
     uses: ./.github/workflows/_build.yml
+    with:
+      ref: "refs/tags/${{ steps.semver.outputs.nextStrict }}"
 
 
   # -------------
@@ -69,6 +71,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: "refs/tags/${{ steps.semver.outputs.nextStrict }}"
 
       - uses: actions/download-artifact@v4
         with:
@@ -87,11 +91,11 @@ jobs:
 
       - name: Generate Changelog
         id: changelog
-        uses: jaywcjlove/changelog-generator@v2.1.0
+        uses: requarks/changelog-action@v1.9.0
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          show-emoji: false
-          filter-author: (GitHub Automation|automation\\[bot\\])
+          tag: ${{ steps.semver.outputs.nextStrict }}
+          excludeScopes: "release"
 
       - uses: ncipollo/release-action@v1
         with:
@@ -117,6 +121,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          ref: "refs/tags/${{ steps.semver.outputs.nextStrict }}"
 
       - name: Download Release Assets
         env:

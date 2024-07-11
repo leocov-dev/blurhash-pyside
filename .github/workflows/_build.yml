@@ -2,6 +2,10 @@ name: Build
 
 on:
   workflow_call:
+    inputs:
+      ref:
+        type: string
+        default: ""
 
 jobs:
 
@@ -16,6 +20,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
 
       - name: Build SDist
         id: sdist
