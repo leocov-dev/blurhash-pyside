@@ -1,11 +1,11 @@
 # blurhash-pyside
 
-![GitHub License](https://img.shields.io/github/license/leocov-dev/blurhash-pyside)
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/leocov-dev/blurhash-pyside/ci.yml)
-![GitHub Release](https://img.shields.io/github/v/release/leocov-dev/blurhash-pyside)
-![PyPI - Version](https://img.shields.io/pypi/v/blurhash-pyside)
-![PyPI - Wheel](https://img.shields.io/pypi/wheel/blurhash-pyside)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/blurhash-pyside)
+[![GitHub License](https://img.shields.io/github/license/leocov-dev/blurhash-pyside)](./LICENSE)
+[![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/leocov-dev/blurhash-pyside/ci.yml)](https://github.com/leocov-dev/blurhash-pyside/actions/workflows/ci.yml)
+[![GitHub Release](https://img.shields.io/github/v/release/leocov-dev/blurhash-pyside)](https://github.com/leocov-dev/blurhash-pyside/releases/latest)
+[![PyPI - Version](https://img.shields.io/pypi/v/blurhash-pyside)](https://pypi.org/project/blurhash-pyside/)
+[![PyPI - Wheel](https://img.shields.io/pypi/wheel/blurhash-pyside)](https://pypi.org/project/blurhash-pyside/#files)
+[![PyPI - Python Version](https://img.shields.io/pypi/pyversions/blurhash-pyside)](./pyproject.toml)
 
 
 Blurhash encoding and decoding for PySide2/6. 
