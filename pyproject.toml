@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core>=0.3.3", "pybind11", "hatchling"]
+requires = ["scikit-build-core>=0.3.3", "pybind11>=2.12", "hatchling", "numpy>=2"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -51,7 +51,7 @@ type = "virtual"
 path = ".venv"
 dependencies = [
     "build",
-    "pybind11",
+    "pybind11>=2.12",
 ]
 features = ["test"]
 
