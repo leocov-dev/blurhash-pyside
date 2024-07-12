@@ -1,5 +1,5 @@
 [build-system]
-requires = ["scikit-build-core>=0.3.3", "pybind11>=2.12", "hatchling", "numpy>=2"]
+requires = ["scikit-build-core>=0.3.3", "pybind11>=2.12", "hatchling"]
 build-backend = "scikit_build_core.build"
 
 [project]
@@ -27,6 +27,7 @@ test = [
     "pytest",
     "opencv-python",
     "scikit-image",
+    "numpy",  # testing under PySide2 requires numpy<2
 ]
 
 [project.urls]
@@ -62,8 +63,11 @@ compile = "python scripts/compile-cpp.py"
 # examples env -----------------------------------------------------------------
 [tool.hatch.envs.pyside6]
 skip-install = false
-dependencies = ["PySide6", "qtpy~=2.4"]
-features = ["test"]
+dependencies = [
+    "PySide6",
+    "qtpy~=2.4",
+    "pybind11>=2.12",
+]
 [tool.hatch.envs.pyside6.scripts]
 example = [
     "hatch run compile",
@@ -72,8 +76,11 @@ example = [
 
 [tool.hatch.envs.pyside2]
 python = "3.9"
-dependencies = ["PySide2", "qtpy~=2.4"]
-features = ["test"]
+dependencies = [
+    "PySide2",
+    "qtpy~=2.4",
+    "pybind11>=2.12",
+]
 [tool.hatch.envs.pyside2.scripts]
 example = [
     "hatch run compile",
