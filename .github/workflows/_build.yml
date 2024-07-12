@@ -39,7 +39,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: cibw-sdist
+          name: cibw-sdist-${{ github.sha }}
           path: dist/*.tar.gz
           if-no-files-found: error
 
@@ -71,7 +71,7 @@ jobs:
       - name: Download sdist ${{ needs.sdist.outputs.SDIST_NAME }}
         uses: actions/download-artifact@v4
         with:
-          name: cibw-sdist
+          name: cibw-sdist*
           path: dist/
 
       - name: Build wheels
@@ -84,6 +84,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: cibw-wheels-${{ runner.os }}-${{ matrix.cibw_archs }}
+          name: cibw-wheels-${{ runner.os }}-${{ matrix.cibw_archs }}-${{ github.sha }}
           path: ./wheelhouse/*.whl
           if-no-files-found: error
