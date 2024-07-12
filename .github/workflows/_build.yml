@@ -26,7 +26,7 @@ jobs:
 
       - name: Set dev version
         if: ${{ inputs.is-dev == true }}
-        run: hatch version "$(hatch version)+${GITHUB_SHA::7}"
+        run: pipx run hatch version "$(pipx run hatch version)+${GITHUB_SHA::7}"
 
       - name: Build SDist
         id: sdist
