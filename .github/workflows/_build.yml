@@ -4,6 +4,9 @@ on:
       ref:
         type: string
         default: ""
+      is-dev:
+        type: boolean
+        default: false
 
 jobs:
 
@@ -20,6 +23,10 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ inputs.ref }}
+
+      - name: Set dev version
+        if: ${{ inputs.is-dev == true }}
+        run: hatch version "$(hatch version)+${GITHUB_SHA::7}"
 
       - name: Build SDist
         id: sdist
